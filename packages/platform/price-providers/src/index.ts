@@ -13,17 +13,16 @@ export type {
   ProviderCapabilities,
 } from './shared/types/index.js';
 
-// Provider registry
-export { PriceProviderRegistry } from './shared/registry/provider-registry.js';
-export { PriceProvider } from './shared/registry/decorators.js';
-
-// Base provider
-export { BasePriceProvider } from './shared/base-provider.js';
-
 // Provider manager
-// TODO: Implement PriceProviderManager
-// export { PriceProviderManager } from './shared/provider-manager.js';
+export { PriceProviderManager } from './shared/provider-manager.js';
+export type { ProviderManagerConfig } from './shared/types/index.js';
 
-// CoinGecko provider
-// TODO: Implement CoinGeckoProvider
-// export { CoinGeckoProvider } from './coingecko/provider.js';
+// Shared factory - recommended way to create providers
+export { createPriceProviders, getAvailableProviderNames } from './shared/factory.js';
+export type { ProviderFactoryConfig, ProviderName } from './shared/factory.js';
+
+// Database and repositories (for advanced usage)
+// export { createPricesDatabase, initializePricesDatabase } from './pricing/database.js';
+// export { ProviderRepository } from './pricing/repositories/provider-repository.js';
+// export { PriceRepository } from './pricing/repositories/price-repository.js';
+// export type { PricesDB } from './pricing/database.js';

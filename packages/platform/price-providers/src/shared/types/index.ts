@@ -1,3 +1,4 @@
+import type { Currency } from '@exitbook/core';
 import type { Result } from 'neverthrow';
 
 /**
@@ -5,21 +6,21 @@ import type { Result } from 'neverthrow';
  */
 export interface PriceQuery {
   /** Asset symbol (e.g., 'BTC', 'ETH') */
-  asset: string;
+  asset: Currency;
   /** Timestamp for price lookup */
   timestamp: Date;
   /** Target currency (default: 'USD') */
-  currency?: string | undefined;
+  currency?: Currency | undefined;
 }
 
 /**
  * Normalized price data from any provider
  */
 export interface PriceData {
-  asset: string;
+  asset: Currency;
   timestamp: Date;
   price: number;
-  currency: string;
+  currency: Currency;
   source: string; // Provider name
   fetchedAt: Date;
 }
@@ -27,7 +28,7 @@ export interface PriceData {
 /**
  * Provider operation types
  */
-export type PriceProviderOperation = 'fetchPrice' | 'fetchBatch' | 'fetchHistoricalRange';
+export type PriceProviderOperation = 'fetchPrice' | 'fetchHistoricalRange';
 
 /**
  * Provider capabilities metadata
@@ -35,8 +36,6 @@ export type PriceProviderOperation = 'fetchPrice' | 'fetchBatch' | 'fetchHistori
 export interface ProviderCapabilities {
   /** Operations supported by this provider */
   supportedOperations: PriceProviderOperation[];
-  /** Maximum batch size for fetchBatch */
-  maxBatchSize?: number | undefined;
   /** Supported currencies */
   supportedCurrencies: string[];
   /** Rate limit info */
@@ -55,7 +54,6 @@ export interface ProviderMetadata {
   name: string;
   displayName: string;
   capabilities: ProviderCapabilities;
-  priority: number; // Lower = higher priority
   requiresApiKey: boolean;
 }
 
@@ -81,14 +79,15 @@ export interface IPriceProvider {
   fetchPrice(query: PriceQuery): Promise<Result<PriceData, Error>>;
 
   /**
-   * Fetch prices for multiple queries in batch
-   */
-  fetchBatch(queries: PriceQuery[]): Promise<Result<PriceData[], Error>>;
-
-  /**
    * Get provider metadata
    */
   getMetadata(): ProviderMetadata;
+
+  /**
+   * Optional initialization hook called after provider creation
+   * Used for setup tasks like syncing coin lists, warming caches, etc.
+   */
+  initialize?(): Promise<Result<void, Error>>;
 }
 
 /**
